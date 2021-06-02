@@ -7,11 +7,25 @@ defmodule FizzBuzz do
   end
 
   # Usando pipe e função anônima resumida
-  def handle_file_read({:ok, result}) do
-    result
-    |> String.split(",")
-    |> Enum.map(&String.to_integer/1)
+  defp handle_file_read({:ok, result}) do
+    result =
+      result
+      |> String.split(",")
+      |> Enum.map(&convertAndEvaluateNumbers/1)
+
+    {:ok, result}
   end
 
-  def handle_file_read({:error, reason}), do: "Error reading the file: #{reason}"
+  defp handle_file_read({:error, reason}), do: {:error, "Error reading the file: #{reason}"}
+
+  defp convertAndEvaluateNumbers(elem) do
+    elem
+    |> String.to_integer()
+    |> evaluateNumbers()
+  end
+
+  defp evaluateNumbers(number) when rem(number, 3) == 0 and rem(number, 5) == 0, do: :fizzbuzz
+  defp evaluateNumbers(number) when rem(number, 3) == 0, do: :fizz
+  defp evaluateNumbers(number) when rem(number, 5) == 0, do: :buzz
+  defp evaluateNumbers(number), do: number
 end
